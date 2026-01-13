@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package factory;
+
+option go_package = "github.com/bsmider/vibe/core/factory;factory";
+
+import "google/protobuf/timestamp.proto";
+import "google/rpc/status.proto";
+
+message Packet {
+    string id = 1;
+    PacketType type = 2;
+    string target_io_type = 3;
+    Context context = 4;
+    bytes payload = 5;
+    Error error = 6;
+}
+
+enum PacketType {
+    PACKET_TYPE_UNSPECIFIED = 0;
+    PACKET_TYPE_REQUEST = 1;
+    PACKET_TYPE_RESPONSE = 2;
+}
+
+message Error {
+    google.rpc.Status status = 1;
+}
+
+message Context {
+    google.protobuf.Timestamp deadline = 1;
+    string trace_id = 2;
+    repeated Hop hops = 3;
+}
+
+message Hop {
+    string binary_id = 1;
+    google.protobuf.Timestamp timestamp = 2;
+}

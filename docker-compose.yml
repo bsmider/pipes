@@ -1,0 +1,48 @@
+services:
+  # core:
+  #   build:
+  #     context: .
+  #     dockerfile: ./core/Dockerfile
+  #   container_name: core
+  #   environment:
+  #     - CORE_PORT=${CORE_PORT}
+  #   ports:
+  #     - "${CORE_PORT}:${CORE_PORT}"
+  #   restart: unless-stopped
+
+  # postgres:
+  #   image: postgres:18
+  #   container_name: postgres
+  #   environment:
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASS}
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #   ports:
+  #     - ${POSTGRES_PORT}:${POSTGRES_PORT}
+  #   volumes:
+  #     - postgres-db-data:/var/lib/postgresql/
+  #     - ./scripts/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # postgres-admin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: postgres-admin
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${POSTGRES_ADMIN_USER}
+  #     PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_ADMIN_PASS}
+  #   ports:
+  #     - ${POSTGRES_ADMIN_PORT}:${POSTGRES_ADMIN_PORT}
+  #   depends_on:
+  #     - postgres
+  #   volumes:
+  #     - pgadmin-data:/var/lib/pgadmin
+
+  factory-example:
+    build:
+      context: .
+      dockerfile: ./core/factory/example/Dockerfile
+    container_name: factory-example
+    restart: unless-stopped
+
+volumes:
+  postgres-db-data:
+  pgadmin-data:

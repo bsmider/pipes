@@ -1,0 +1,13 @@
+version: v2
+plugins:
+  - remote: buf.build/protocolbuffers/go
+    out: .
+    opt:
+      # This strips the repo prefix so Buf creates folders 
+      # starting from your actual project root.
+      - module=github.com/bsmider/vibe 
+
+  - remote: buf.build/grpc/go
+    out: .
+    opt:
+      - module=github.com/bsmider/vibe

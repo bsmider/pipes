@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package example;
+
+option go_package = "github.com/bsmider/vibe/core/factory/build/example;example";
+
+service BookService {
+    rpc GetBook(GetBookRequest) returns (GetBookResponse);
+    rpc GetAuthorNameFromBookId(GetAuthorNameFromBookIdRequest) returns (GetAuthorNameFromBookIdResponse);
+}
+
+message GetAuthorNameFromBookIdRequest {
+    string bookId = 1;
+}
+
+message GetAuthorNameFromBookIdResponse {
+    string authorName = 1;
+}
+
+message Author {
+    string authorId = 1;
+    string name = 2;
+}
+
+message Book {
+    string bookId = 1;
+    string authorId = 2;
+    string title = 3;
+}
+
+message GetBookRequest {
+    string bookId = 1;
+}
+
+message GetBookResponse {
+    Book book = 1;
+}
+
+message GetAuthorRequest {
+    string authorId = 1;
+}
+
+message GetAuthorResponse {
+    Author author = 1;
+}
