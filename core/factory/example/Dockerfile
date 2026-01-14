@@ -26,8 +26,8 @@ RUN apk add --no-cache libc6-compat
 
 # Copy binaries
 COPY --from=builder /get_book .
-COPY --from=builder /orchestrator .
 COPY --from=builder /get_author .
+COPY --from=builder /orchestrator .
 
 # Run orchestrator
 CMD ["./orchestrator"]

@@ -3,9 +3,11 @@ package factory
 import (
 	"context"
 	"fmt"
-	sync "sync"
+	"os"
+	"sync"
 	"time"
 
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -17,8 +19,6 @@ type ContextWrapper struct {
 type contextKey string
 
 const protoContexWrappertKey = "protoContextWrapper"
-const hopsKey contextKey = "hops"
-const traceIdKey contextKey = "traceId"
 const defaultTimeout = 30 * time.Second
 
 func (ctx *Context) AddHop(binaryId string) error {
@@ -47,6 +47,14 @@ func AddHop(ctx context.Context, binaryId string) error {
 	}
 
 	return fmt.Errorf("context is not a proto context")
+}
+
+func NewContext(deadline *timestamppb.Timestamp, traceId string, hops []*Hop) *Context {
+	return &Context{
+		Deadline: deadline,
+		TraceId:  traceId,
+		Hops:     hops,
+	}
 }
 
 func UpdateContext(ctx context.Context, newContext *Context) error {
@@ -80,7 +88,7 @@ func (ctx *Context) ToGoContext() (context.Context, context.CancelFunc) {
 	}
 
 	// store the factory context
-	goCtx = context.WithValue(goCtx, protoContexWrappertKey, ctx)
+	goCtx = context.WithValue(goCtx, protoContexWrappertKey, &ContextWrapper{ctx: ctx})
 
 	// Return the wrapped context and the cancel function
 	return context.WithCancel(goCtx)
@@ -99,4 +107,36 @@ func (m *Context) FromGoContext(ctx context.Context) *Context {
 	}
 
 	return m
+}
+
+// PrintDetails outputs the context structure to the console in a readable format.
+func (m *Context) PrintDetails() {
+	if m == nil {
+		fmt.Fprintln(os.Stderr, "[Context] <nil>")
+		return
+	}
+
+	// Configure the marshaler for "pretty printing"
+	options := protojson.MarshalOptions{
+		Multiline:       true,
+		Indent:          "  ",
+		EmitUnpopulated: true,
+	}
+
+	jsonBytes, err := options.Marshal(m)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "[Context Error] Could not format context: %v\n", err)
+		return
+	}
+
+	fmt.Fprintf(os.Stderr, "--- Context Detail ---\n%s\n----------------------\n", string(jsonBytes))
+}
+
+// PrintDetails extracts the factory context from the Go context and prints its details.
+func PrintDetails(ctx context.Context) {
+	if wrapper, ok := ctx.Value(protoContexWrappertKey).(*ContextWrapper); ok {
+		wrapper.ctx.PrintDetails()
+	} else {
+		fmt.Fprintln(os.Stderr, "[factory.PrintDetails] Warning: context does not contain a factory context")
+	}
 }

@@ -11,17 +11,13 @@ import (
 
 func main() {
 	orch := orchestrator.NewOrchestrator()
-	orch.Spawn({FILE PATH TO GENERATED RPC GO FILE1 AS A STRING}, {FILE PATH TO COMPILED RPC GO BINARY1 AS A STRING}, 1)
-	orch.Spawn({FILE PATH TO GENERATED RPC GO FILE2 AS A STRING}, {FILE PATH TO COMPILED RPC GO BINARY2 AS A STRING}, 1)
-	orch.Spawn({FILE PATH TO GENERATED RPC GO FILE3 AS A STRING}, {FILE PATH TO COMPILED RPC GO BINARY3 AS A STRING}, 1)
-	orch.Spawn({FILE PATH TO GENERATED RPC GO FILE4 AS A STRING}, {FILE PATH TO COMPILED RPC GO BINARY4 AS A STRING}, 1)
-}
 
-func main() {
-	orch := orchestrator.NewOrchestrator()
-	orch.Spawn("GetBook", "./get_book", 1)
-	orch.Spawn("GetAuthor", "./get_author", 1)
-
+	if err := orch.Spawn("github.com/bsmider/vibe/core/factory/build/example.BookService.GetBook", "./49923a45240c_GetBook", 1); err != nil {
+		log.Fatalf("Failed to spawn worker for %s: %v", "GetBook", err)
+	}
+	if err := orch.Spawn("github.com/bsmider/vibe/core/factory/build/example.BookService.GetAuthorNameFromBookId", "./b10ac789a6d1_GetAuthorNameFromBookId", 1); err != nil {
+		log.Fatalf("Failed to spawn worker for %s: %v", "GetAuthorNameFromBookId", err)
+	}
 	// 1. Create the specific domain message
 	bookReq := &example.GetBookRequest{
 		BookId: "123-abc",
@@ -30,7 +26,7 @@ func main() {
 	ctx := factory.NewContext(nil, "trace-uuid-"+uuid.NewString()[:8], []*factory.Hop{})
 	ctx.AddHop("orchestrator") // Record where this started
 
-	requestPacket, err := factory.CreateRequestPacket("GetBook", ctx, bookReq, nil)
+	requestPacket, err := factory.CreateRequestPacket("github.com/bsmider/vibe/core/factory/build/example.BookService.GetBook", ctx, bookReq, nil)
 	if err != nil {
 		log.Fatal("error creating request packet")
 	}
@@ -39,6 +35,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to route request:", err)
 	}
+
+	resp.PrintDetails()
 
 	// Deserialize the payload into a GetBookResponse
 	bookResp, err := factory.DeserializePacket[*example.GetBookResponse](resp)
@@ -53,5 +51,7 @@ func main() {
 	} else {
 		log.Println("Response received but Book is nil")
 	}
-}
 
+	// Block forever to keep the orchestrator running
+	select {}
+}
