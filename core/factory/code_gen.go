@@ -14,22 +14,20 @@ import (
 	"github.com/bsmider/pipes/core/factory/utils"
 )
 
+// DefaultProcessesImport is the default import path for the processes package
+const DefaultProcessesImport = "github.com/bsmider/pipes/core/factory/processes"
+
 // CodeGenConfig contains configuration for code generation
 type CodeGenConfig struct {
-	OutputDir         string // Directory where generated files will be written
-	SrcDir            string // Directory containing service files
-	ProcessesImport   string // Import path for the processes package
-	ProtoImportPath   string // Import path for proto messages (e.g., "github.com/bsmider/pipes/core/factory/build/example")
-	ProtoPackageAlias string // Package alias for proto imports (e.g., "example")
+	OutputDir string // Directory where generated files will be written
+	SrcDir    string // Directory containing service files
 }
 
 // DefaultCodeGenConfig returns the default configuration for code generation
 func DefaultCodeGenConfig() CodeGenConfig {
 	return CodeGenConfig{
-		OutputDir:         "./generated",
-		SrcDir:            "./",
-		ProcessesImport:   "github.com/bsmider/pipes/core/factory/processes",
-		ProtoPackageAlias: "example",
+		OutputDir: "./generated",
+		SrcDir:    "./",
 	}
 }
 
@@ -41,9 +39,8 @@ func GenerateFromServiceFile(servicePath string, config CodeGenConfig) ([]Method
 		return nil, fmt.Errorf("failed to parse service file: %w", err)
 	}
 
-	// Use discovered proto import path if not specified
-	if config.ProtoImportPath == "" {
-		config.ProtoImportPath = parsed.ProtoImportPath
+	if parsed.ProtoImportPath == "" {
+		return nil, fmt.Errorf("could not determine proto import path from service file imports (looking for 'build' directory)")
 	}
 
 	// Create output directory if it doesn't exist
@@ -91,7 +88,7 @@ func generateMethodFile(servicePath string, method utils.ServiceMethod, parsed *
 
 	// Generate unique directory path based on proto package, service, and method
 	// This ensures uniqueness even with same method names across different services
-	methodDir := utils.GenerateDirPath(config.ProtoImportPath, parsed.ServiceName, method.Name)
+	methodDir := utils.GenerateDirPath(parsed.ProtoImportPath, parsed.ServiceName, method.Name)
 	outputDir := filepath.Join(config.OutputDir, methodDir)
 
 	// Create the method-specific directory (including parent directories)
@@ -112,8 +109,8 @@ func generateMethodFile(servicePath string, method utils.ServiceMethod, parsed *
 	relPath := filepath.Join(methodDir, "main.go")
 
 	// Generate the unique MethodID
-	methodID := utils.GenerateMethodID(config.ProtoImportPath, parsed.ServiceName, method.Name)
-	shortID := utils.GenerateShortMethodID(config.ProtoImportPath, parsed.ServiceName, method.Name)
+	methodID := utils.GenerateMethodID(parsed.ProtoImportPath, parsed.ServiceName, method.Name)
+	shortID := utils.GenerateShortMethodID(parsed.ProtoImportPath, parsed.ServiceName, method.Name)
 
 	return &MethodInfo{
 		MethodName:   method.Name,
@@ -257,7 +254,7 @@ func buildProcessesCall(call utils.RPCCall, targetMethod *utils.ServiceMethod, p
 	respType := targetMethod.RespType
 
 	// Generate unique method ID based on full package path, service, and method
-	methodID := utils.GenerateMethodID(config.ProtoImportPath, parsed.ServiceName, targetMethod.Name)
+	methodID := utils.GenerateMethodID(parsed.ProtoImportPath, parsed.ServiceName, targetMethod.Name)
 
 	return fmt.Sprintf(`processes.Call[%s, %s]("%s", %s, %s)`,
 		reqType,
@@ -281,8 +278,56 @@ func generateFileContent(method utils.ServiceMethod, parsed *utils.ParsedService
 	buf.WriteString("\t\"flag\"\n")
 	buf.WriteString("\t\"log\"\n")
 	buf.WriteString("\n")
-	buf.WriteString(fmt.Sprintf("\t\"%s\"\n", config.ProtoImportPath))
-	buf.WriteString(fmt.Sprintf("\t\"%s\"\n", config.ProcessesImport))
+
+	// Track imported packages to avoid duplicates
+	// keyed by import path
+	imported := map[string]bool{
+		"context": true,
+		"flag":    true,
+		"log":     true,
+		"github.com/bsmider/pipes/core/factory/processes": true,
+	}
+
+	// Add imports from source file if they appear to be used in the body
+	// or if they are the proto import which is needed for signature
+	for _, imp := range parsed.Imports {
+		// Skip if already imported
+		if imported[imp.Path] {
+			continue
+		}
+
+		// Heuristic: check if the package name or alias appears in the transformed body
+		// For the proto import, we always include it because it's used in the signature
+
+		isProto := imp.Path == parsed.ProtoImportPath
+
+		// Determined name to search for usage
+		searchName := imp.Name
+		if searchName == "" {
+			parts := strings.Split(imp.Path, "/")
+			searchName = parts[len(parts)-1]
+		}
+
+		if isProto {
+			// Always include proto import
+			if imp.Name != "" {
+				buf.WriteString(fmt.Sprintf("\t%s \"%s\"\n", imp.Name, imp.Path))
+			} else {
+				buf.WriteString(fmt.Sprintf("\t\"%s\"\n", imp.Path))
+			}
+			imported[imp.Path] = true
+		} else if strings.Contains(transformedBody, searchName+".") {
+			// Include only if used
+			if imp.Name != "" {
+				buf.WriteString(fmt.Sprintf("\t%s \"%s\"\n", imp.Name, imp.Path))
+			} else {
+				buf.WriteString(fmt.Sprintf("\t\"%s\"\n", imp.Path))
+			}
+			imported[imp.Path] = true
+		}
+	}
+
+	buf.WriteString("\t\"github.com/bsmider/pipes/core/factory/processes\"\n")
 	buf.WriteString(")\n\n")
 
 	// Function signature (without receiver)
@@ -313,10 +358,9 @@ func generateFileContent(method utils.ServiceMethod, parsed *utils.ParsedService
 
 // QuickGenerate is a convenience function that generates code from a service file
 // using sensible defaults and writes to a directory named after the method
-func QuickGenerate(servicePath string, outputBaseDir string, protoImportPath string) error {
+func QuickGenerate(servicePath string, outputBaseDir string) error {
 	config := DefaultCodeGenConfig()
 	config.OutputDir = outputBaseDir
-	config.ProtoImportPath = protoImportPath
 	_, err := GenerateFromServiceFile(servicePath, config)
 	return err
 }
@@ -329,9 +373,9 @@ func GenerateSingleMethod(servicePath string, methodName string, config CodeGenC
 		return fmt.Errorf("failed to parse service file: %w", err)
 	}
 
-	// Use discovered proto import path if not specified
-	if config.ProtoImportPath == "" {
-		config.ProtoImportPath = parsed.ProtoImportPath
+	// Use discovered proto import path
+	if parsed.ProtoImportPath == "" {
+		return fmt.Errorf("could not determine proto import path from service file imports (looking for 'build' directory)")
 	}
 
 	// Find the method

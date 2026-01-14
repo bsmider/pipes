@@ -19,10 +19,7 @@ func TestGenerateFromServiceFile(t *testing.T) {
 	defer os.RemoveAll(tempDir)
 
 	config := CodeGenConfig{
-		OutputDir:         tempDir,
-		ProcessesImport:   "github.com/bsmider/pipes/core/factory/processes",
-		ProtoImportPath:   "github.com/bsmider/pipes/core/factory/build/example",
-		ProtoPackageAlias: "example",
+		OutputDir: tempDir,
 	}
 
 	_, err = GenerateFromServiceFile(servicePath, config)

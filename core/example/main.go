@@ -21,11 +21,8 @@ func main() {
 	serviceDir := filepath.Join(cwd, "example/src")
 
 	config := factory.CodeGenConfig{
-		OutputDir:         outputDir,
-		SrcDir:            serviceDir,
-		ProcessesImport:   "github.com/bsmider/pipes/core/factory/processes",
-		ProtoImportPath:   "github.com/bsmider/pipes/core/example/build/example",
-		ProtoPackageAlias: "example",
+		OutputDir: outputDir,
+		SrcDir:    serviceDir,
 	}
 
 	if err := factory.Build(config); err != nil {
@@ -60,6 +57,9 @@ func main() {
 
 	containerName := "pipes-generated-example-run"
 	fmt.Printf("Running Docker container: %s...\n", containerName)
+	// cleanup existing container if any
+	exec.Command("docker", "rm", "-f", containerName).Run()
+
 	runCmd := exec.Command("docker", "run", "--rm", "--name", containerName, "pipes-generated-example")
 	runCmd.Stdout = os.Stdout
 	runCmd.Stderr = os.Stderr
