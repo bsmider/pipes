@@ -36,6 +36,8 @@ func main() {
 		log.Fatal("Failed to route request:", err)
 	}
 
+	resp.PrintDetails()
+
 	// Deserialize the payload into a GetBookResponse
 	bookResp, err := factory.DeserializePacket[*example.GetBookResponse](resp)
 	if err != nil {
