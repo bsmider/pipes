@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
+	"github.com/bsmider/pipes/core/example/build/example"
 	"github.com/bsmider/pipes/core/factory"
-	"github.com/bsmider/pipes/core/factory/build/example"
 	"github.com/bsmider/pipes/core/factory/orchestrator"
 	"github.com/google/uuid"
 )
