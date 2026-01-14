@@ -36,13 +36,6 @@ services:
   #   volumes:
   #     - pgadmin-data:/var/lib/pgadmin
 
-  factory-example:
-    build:
-      context: .
-      dockerfile: ./core/generated/Dockerfile
-    container_name: factory-example
-    # restart: unless-stopped
-
   core-example:
     build:
       context: ./core
