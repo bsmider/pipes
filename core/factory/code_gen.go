@@ -276,7 +276,6 @@ func generateFileContent(method utils.ServiceMethod, parsed *utils.ParsedService
 	buf.WriteString("import (\n")
 	buf.WriteString("\t\"context\"\n")
 	buf.WriteString("\t\"flag\"\n")
-	buf.WriteString("\t\"log\"\n")
 	buf.WriteString("\n")
 
 	// Track imported packages to avoid duplicates
@@ -284,7 +283,6 @@ func generateFileContent(method utils.ServiceMethod, parsed *utils.ParsedService
 	imported := map[string]bool{
 		"context": true,
 		"flag":    true,
-		"log":     true,
 		"github.com/bsmider/pipes/core/factory/processes": true,
 	}
 

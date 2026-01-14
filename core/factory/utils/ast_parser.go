@@ -74,104 +74,103 @@ func ParseServiceFile(filePath string) (*ParsedServiceFile, error) {
 			Name: name,
 			Path: importPath,
 		})
+	}
 
-		// Find all method declarations with receivers
-		ast.Inspect(file, func(n ast.Node) bool {
-			funcDecl, ok := n.(*ast.FuncDecl)
-			if !ok || funcDecl.Recv == nil {
-				return true
-			}
-
-			// Extract receiver info
-			if len(funcDecl.Recv.List) == 0 {
-				return true
-			}
-
-			recv := funcDecl.Recv.List[0]
-			recvName := ""
-			if len(recv.Names) > 0 {
-				recvName = recv.Names[0].Name
-			}
-
-			recvType := extractTypeName(recv.Type)
-			if result.ServiceName == "" && strings.HasSuffix(recvType, "Service") {
-				result.ServiceName = recvType
-			}
-
-			// Extract method signature
-			method := ServiceMethod{
-				Name:         funcDecl.Name.Name,
-				ReceiverType: recvType,
-				ReceiverName: recvName,
-			}
-
-			// Extract parameters
-			if funcDecl.Type.Params != nil && len(funcDecl.Type.Params.List) >= 2 {
-				// First param should be context
-				if len(funcDecl.Type.Params.List[0].Names) > 0 {
-					method.CtxName = funcDecl.Type.Params.List[0].Names[0].Name
-				}
-				// Second param should be request
-				if len(funcDecl.Type.Params.List[1].Names) > 0 {
-					method.ReqName = funcDecl.Type.Params.List[1].Names[0].Name
-				}
-				method.ReqType = exprToString(funcDecl.Type.Params.List[1].Type, fset)
-			}
-
-			// Extract return types
-			if funcDecl.Type.Results != nil && len(funcDecl.Type.Results.List) >= 1 {
-				method.RespType = exprToString(funcDecl.Type.Results.List[0].Type, fset)
-			}
-
-			// Extract body positions
-			if funcDecl.Body != nil {
-				method.BodyStart = int(funcDecl.Body.Lbrace)
-				method.BodyEnd = int(funcDecl.Body.Rbrace)
-			}
-
-			result.Methods = append(result.Methods, method)
+	// Find all method declarations with receivers
+	ast.Inspect(file, func(n ast.Node) bool {
+		funcDecl, ok := n.(*ast.FuncDecl)
+		if !ok || funcDecl.Recv == nil {
 			return true
-		})
+		}
 
-		// Resolve ProtoImportPath by inspecting the Request Type of the first available method
-		// We assume all methods in the service use types from the same proto package.
-		for _, method := range result.Methods {
-			if method.ReqType == "" {
-				continue
+		// Extract receiver info
+		if len(funcDecl.Recv.List) == 0 {
+			return true
+		}
+
+		recv := funcDecl.Recv.List[0]
+		recvName := ""
+		if len(recv.Names) > 0 {
+			recvName = recv.Names[0].Name
+		}
+
+		recvType := extractTypeName(recv.Type)
+		if result.ServiceName == "" && strings.HasSuffix(recvType, "Service") {
+			result.ServiceName = recvType
+		}
+
+		// Extract method signature
+		method := ServiceMethod{
+			Name:         funcDecl.Name.Name,
+			ReceiverType: recvType,
+			ReceiverName: recvName,
+		}
+
+		// Extract parameters
+		if funcDecl.Type.Params != nil && len(funcDecl.Type.Params.List) >= 2 {
+			// First param should be context
+			if len(funcDecl.Type.Params.List[0].Names) > 0 {
+				method.CtxName = funcDecl.Type.Params.List[0].Names[0].Name
+			}
+			// Second param should be request
+			if len(funcDecl.Type.Params.List[1].Names) > 0 {
+				method.ReqName = funcDecl.Type.Params.List[1].Names[0].Name
+			}
+			method.ReqType = exprToString(funcDecl.Type.Params.List[1].Type, fset)
+		}
+
+		// Extract return types
+		if funcDecl.Type.Results != nil && len(funcDecl.Type.Results.List) >= 1 {
+			method.RespType = exprToString(funcDecl.Type.Results.List[0].Type, fset)
+		}
+
+		// Extract body positions
+		if funcDecl.Body != nil {
+			method.BodyStart = int(funcDecl.Body.Lbrace)
+			method.BodyEnd = int(funcDecl.Body.Rbrace)
+		}
+
+		result.Methods = append(result.Methods, method)
+		return true
+	})
+
+	// Resolve ProtoImportPath by inspecting the Request Type of the first available method
+	// We assume all methods in the service use types from the same proto package.
+	for _, method := range result.Methods {
+		if method.ReqType == "" {
+			continue
+		}
+
+		// Request type is typically like "*example.GetBookRequest"
+		// We want to extract "example"
+		parts := strings.Split(strings.TrimPrefix(method.ReqType, "*"), ".")
+		if len(parts) < 2 {
+			continue
+		}
+
+		pkgAlias := parts[0]
+
+		// Look up the import path for this alias
+		for _, imp := range result.Imports {
+			// Check explicit alias
+			if imp.Name == pkgAlias {
+				result.ProtoImportPath = imp.Path
+				break
 			}
 
-			// Request type is typically like "*example.GetBookRequest"
-			// We want to extract "example"
-			parts := strings.Split(strings.TrimPrefix(method.ReqType, "*"), ".")
-			if len(parts) < 2 {
-				continue
-			}
-
-			pkgAlias := parts[0]
-
-			// Look up the import path for this alias
-			for _, imp := range result.Imports {
-				// Check explicit alias
-				if imp.Name == pkgAlias {
+			// Check default package name (last part of path)
+			if imp.Name == "" {
+				pathParts := strings.Split(imp.Path, "/")
+				if len(pathParts) > 0 && pathParts[len(pathParts)-1] == pkgAlias {
 					result.ProtoImportPath = imp.Path
 					break
 				}
-
-				// Check default package name (last part of path)
-				if imp.Name == "" {
-					pathParts := strings.Split(imp.Path, "/")
-					if len(pathParts) > 0 && pathParts[len(pathParts)-1] == pkgAlias {
-						result.ProtoImportPath = imp.Path
-						break
-					}
-				}
-			}
-
-			if result.ProtoImportPath != "" {
-				break
 			}
 		}
 
+		if result.ProtoImportPath != "" {
+			break
+		}
 	}
 
 	return result, nil
