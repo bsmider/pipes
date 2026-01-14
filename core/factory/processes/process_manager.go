@@ -104,7 +104,6 @@ func (node *IONode) readInput() {
 			return
 		}
 
-		log.Printf("%s addding hop", node.id)
 		packet.Context.AddHop(node.id)
 
 		node.routePacket(packet)

@@ -41,7 +41,7 @@ services:
       context: .
       dockerfile: ./core/factory/example/Dockerfile
     container_name: factory-example
-    restart: unless-stopped
+    # restart: unless-stopped
 
 volumes:
   postgres-db-data:

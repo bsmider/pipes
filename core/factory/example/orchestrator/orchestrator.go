@@ -18,12 +18,9 @@ func main() {
 	bookReq := &example.GetBookRequest{
 		BookId: "123-abc",
 	}
-	log.Printf("Created GetBookRequest for ID: %s\n", bookReq.BookId)
 
-	ctx := (&factory.Context{
-		TraceId: "trace-uuid-" + uuid.NewString()[:8], // Example trace ID
-	})
-	ctx.AddHop("orchestrator-main") // Record where this started
+	ctx := factory.NewContext(nil, "trace-uuid-"+uuid.NewString()[:8], []*factory.Hop{})
+	ctx.AddHop("orchestrator") // Record where this started
 
 	requestPacket, err := factory.CreateRequestPacket("GetBook", ctx, bookReq, nil)
 	if err != nil {
@@ -34,6 +31,18 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to route request:", err)
 	}
-	log.Printf("Received response message ID: %s\n", resp.Id)
-	resp.PrintDetails()
+
+	// Deserialize the payload into a GetBookResponse
+	bookResp, err := factory.DeserializePacket[*example.GetBookResponse](resp)
+	if err != nil {
+		log.Fatal("Failed to deserialize response:", err)
+	}
+
+	if bookResp.Book != nil {
+		log.Printf("Book Title: %s\n", bookResp.Book.Title)
+		log.Printf("Book ID: %s\n", bookResp.Book.BookId)
+		log.Printf("Author ID: %s\n", bookResp.Book.AuthorId)
+	} else {
+		log.Println("Response received but Book is nil")
+	}
 }

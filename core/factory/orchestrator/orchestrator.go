@@ -134,9 +134,6 @@ func (o *Orchestrator) RouteRequest(packet *factory.Packet) (*factory.Packet, er
 		case response := <-respChan:
 			// SUCCESS: Cleanup and return the result
 			o.responseChannels.Delete(packet.Id)
-			// The .4 before the 's' limits the output to 4 characters
-			log.Printf("[Orchestrator] Received response for %.4s", packet.Id)
-			log.Printf("[Orchestrator] Dispatched response for %.4s to requester %s", response.Id, response.TargetIoType)
 			return response, nil
 
 		case <-time.After(pool.timeout):
@@ -154,10 +151,6 @@ func (o *Orchestrator) handleInternalRequest(requester *Worker, packet *factory.
 	o.poolsMu.RLock()
 	pool, exists := o.pools[packet.TargetIoType]
 	o.poolsMu.RUnlock()
-
-	// The .4 before the 's' limits the output to 4 characters
-
-	log.Printf("[Orchestrator] Routing request for %.4s (%s) to %s", packet.Id, packet.Type, packet.TargetIoType)
 
 	if !exists {
 		return nil, fmt.Errorf("no workers available for target type: %s", packet.TargetIoType)
@@ -189,16 +182,11 @@ func (o *Orchestrator) handleInternalRequest(requester *Worker, packet *factory.
 		}
 
 		// 4. Wait for response OR timeout
-		//
 		select {
 		case response := <-respChan:
 			// SUCCESS: Cleanup and return the result
-			o.responseChannels.Delete(packet.Id)
-			// The .4 before the 's' limits the output to 4 characters
-			log.Printf("[Orchestrator] Received response for %.4s", packet.Id)
-			log.Printf("[Orchestrator] Dispatched response for %.4s to requester %s", response.Id, response.TargetIoType)
 			requester.sendPacket(response)
-			response.PrintDetails()
+			o.responseChannels.Delete(packet.Id)
 			return nil, nil
 
 		case <-time.After(pool.timeout):
@@ -213,13 +201,10 @@ func (o *Orchestrator) handleInternalRequest(requester *Worker, packet *factory.
 }
 
 func (o *Orchestrator) routeResponse(packet *factory.Packet) error {
-	// log.Printf("[Orchestrator] Routing response for packet %s", packet.PacketId)
 	responseChannel, ok := o.responseChannels.Load(packet.Id)
 	if !ok {
 		return fmt.Errorf("no response channel found for packet ID: %s", packet.Id)
 	}
-
-	log.Printf("[Orchestrator] Routing response for %.4s (%s) to %s", packet.Id, packet.Type, packet.TargetIoType)
 
 	ch, ok := responseChannel.(chan *factory.Packet)
 	if !ok {
@@ -228,7 +213,6 @@ func (o *Orchestrator) routeResponse(packet *factory.Packet) error {
 
 	select {
 	case ch <- packet:
-		log.Printf("[Orchestrator] Put packet into channel %s", packet.Id)
 		return nil
 	default:
 		return fmt.Errorf("requester channel for ID %s is full", packet.Id)

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"log"
 
 	"github.com/bsmider/vibe/core/factory/build/example"
 	"github.com/bsmider/vibe/core/factory/processes"
