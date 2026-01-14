@@ -2,7 +2,6 @@ package orchestrator
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"os/exec"
@@ -94,10 +93,6 @@ func (o *Orchestrator) RouteRequest(packet *factory.Packet) (*factory.Packet, er
 	o.poolsMu.RLock()
 	pool, exists := o.pools[packet.TargetIoType]
 	o.poolsMu.RUnlock()
-
-	// The .4 before the 's' limits the output to 4 characters
-
-	log.Printf("[Orchestrator] Routing request for %.4s (%s) to %s", packet.Id, packet.Type, packet.TargetIoType)
 
 	if !exists {
 		return nil, fmt.Errorf("no workers available for target type: %s", packet.TargetIoType)

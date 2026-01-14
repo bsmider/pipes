@@ -34,9 +34,21 @@ func main() {
 		fmt.Printf("  - %s\n", m)
 	}
 
-	err = factory.GenerateFromServiceFile(servicePath, config)
+	generatedMethods, err := factory.GenerateFromServiceFile(servicePath, config)
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+		fmt.Printf("Error generating methods: %v\n", err)
+		return
+	}
+
+	// Generate Orchestrator
+	if err := factory.GenerateOrchestrator(generatedMethods, config); err != nil {
+		fmt.Printf("Error generating orchestrator: %v\n", err)
+		return
+	}
+
+	// Generate Dockerfile
+	if err := factory.GenerateDockerfile(generatedMethods, config); err != nil {
+		fmt.Printf("Error generating Dockerfile: %v\n", err)
 		return
 	}
 

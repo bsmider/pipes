@@ -32,11 +32,11 @@ func DefaultCodeGenConfig() CodeGenConfig {
 }
 
 // GenerateFromServiceFile generates code files for all RPC methods in a service file
-func GenerateFromServiceFile(servicePath string, config CodeGenConfig) error {
+func GenerateFromServiceFile(servicePath string, config CodeGenConfig) ([]MethodInfo, error) {
 	// Parse the service file
 	parsed, err := utils.ParseServiceFile(servicePath)
 	if err != nil {
-		return fmt.Errorf("failed to parse service file: %w", err)
+		return nil, fmt.Errorf("failed to parse service file: %w", err)
 	}
 
 	// Use discovered proto import path if not specified
@@ -46,7 +46,7 @@ func GenerateFromServiceFile(servicePath string, config CodeGenConfig) error {
 
 	// Create output directory if it doesn't exist
 	if err := os.MkdirAll(config.OutputDir, 0755); err != nil {
-		return fmt.Errorf("failed to create output directory: %w", err)
+		return nil, fmt.Errorf("failed to create output directory: %w", err)
 	}
 
 	// Collect all method names for RPC call detection
@@ -55,29 +55,33 @@ func GenerateFromServiceFile(servicePath string, config CodeGenConfig) error {
 		methodNames[i] = m.Name
 	}
 
+	var methods []MethodInfo
+
 	// Generate a file for each method
 	for _, method := range parsed.Methods {
-		if err := generateMethodFile(servicePath, method, parsed, methodNames, config); err != nil {
-			return fmt.Errorf("failed to generate file for method %s: %w", method.Name, err)
+		info, err := generateMethodFile(servicePath, method, parsed, methodNames, config)
+		if err != nil {
+			return nil, fmt.Errorf("failed to generate file for method %s: %w", method.Name, err)
 		}
+		methods = append(methods, *info)
 	}
 
-	return nil
+	return methods, nil
 }
 
 // generateMethodFile generates a single Go file for an RPC method
-func generateMethodFile(servicePath string, method utils.ServiceMethod, parsed *utils.ParsedServiceFile, methodNames []string, config CodeGenConfig) error {
+func generateMethodFile(servicePath string, method utils.ServiceMethod, parsed *utils.ParsedServiceFile, methodNames []string, config CodeGenConfig) (*MethodInfo, error) {
 	// Read the original source file
 	sourceBytes, err := os.ReadFile(servicePath)
 	if err != nil {
-		return fmt.Errorf("failed to read source file: %w", err)
+		return nil, fmt.Errorf("failed to read source file: %w", err)
 	}
 	source := string(sourceBytes)
 
 	// Extract and transform the function body
 	transformedBody, err := transformMethodBody(servicePath, source, method, parsed, methodNames, config)
 	if err != nil {
-		return fmt.Errorf("failed to transform method body: %w", err)
+		return nil, fmt.Errorf("failed to transform method body: %w", err)
 	}
 
 	// Generate the output file content
@@ -90,16 +94,32 @@ func generateMethodFile(servicePath string, method utils.ServiceMethod, parsed *
 
 	// Create the method-specific directory (including parent directories)
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
-		return fmt.Errorf("failed to create method directory: %w", err)
+		return nil, fmt.Errorf("failed to create method directory: %w", err)
 	}
 
 	outputPath := filepath.Join(outputDir, "main.go")
 
 	if err := os.WriteFile(outputPath, []byte(output), 0644); err != nil {
-		return fmt.Errorf("failed to write output file: %w", err)
+		return nil, fmt.Errorf("failed to write output file: %w", err)
 	}
 
-	return nil
+	// Construct relative path for Dockerfile (relative from core/)
+	// Assumes OutputDir is something like "core/generated"
+	// We want the relative path from the config.OutputDir's parent or relevant root.
+	// For now, let's store the path relative to the OutputDir and let the caller adjust.
+	relPath := filepath.Join(methodDir, "main.go")
+
+	// Generate the unique MethodID
+	methodID := utils.GenerateMethodID(config.ProtoImportPath, parsed.ServiceName, method.Name)
+	shortID := utils.GenerateShortMethodID(config.ProtoImportPath, parsed.ServiceName, method.Name)
+
+	return &MethodInfo{
+		MethodName:   method.Name,
+		MethodID:     methodID,
+		ShortID:      shortID,
+		FullDirPath:  outputDir,
+		RelativePath: relPath, // e.g. "example/book_service/get_book/main.go"
+	}, nil
 }
 
 // transformMethodBody transforms the method body, replacing RPC calls with processes.Call
@@ -295,7 +315,8 @@ func QuickGenerate(servicePath string, outputBaseDir string, protoImportPath str
 	config := DefaultCodeGenConfig()
 	config.OutputDir = outputBaseDir
 	config.ProtoImportPath = protoImportPath
-	return GenerateFromServiceFile(servicePath, config)
+	_, err := GenerateFromServiceFile(servicePath, config)
+	return err
 }
 
 // GenerateSingleMethod generates code for a single method by name
@@ -335,7 +356,8 @@ func GenerateSingleMethod(servicePath string, methodName string, config CodeGenC
 		methodNames[i] = m.Name
 	}
 
-	return generateMethodFile(servicePath, *targetMethod, parsed, methodNames, config)
+	_, err = generateMethodFile(servicePath, *targetMethod, parsed, methodNames, config)
+	return err
 }
 
 // GetServiceMethods returns all method names from a service file

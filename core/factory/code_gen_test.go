@@ -25,7 +25,7 @@ func TestGenerateFromServiceFile(t *testing.T) {
 		ProtoPackageAlias: "example",
 	}
 
-	err = GenerateFromServiceFile(servicePath, config)
+	_, err = GenerateFromServiceFile(servicePath, config)
 	if err != nil {
 		t.Fatalf("GenerateFromServiceFile failed: %v", err)
 	}
