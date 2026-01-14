@@ -39,7 +39,7 @@ type ParsedServiceFile struct {
 	Imports         []string
 	ServiceName     string
 	Methods         []ServiceMethod
-	ProtoImportPath string // The proto import path (e.g., "github.com/bsmider/vibe/core/factory/build/example")
+	ProtoImportPath string // The proto import path (e.g., "github.com/bsmider/pipes/core/factory/build/example")
 }
 
 // ParseServiceFile parses a Go service file and extracts RPC method information

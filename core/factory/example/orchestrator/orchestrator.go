@@ -3,19 +3,11 @@ package main
 import (
 	"log"
 
-	"github.com/bsmider/vibe/core/factory"
-	"github.com/bsmider/vibe/core/factory/build/example"
-	"github.com/bsmider/vibe/core/factory/orchestrator"
+	"github.com/bsmider/pipes/core/factory"
+	"github.com/bsmider/pipes/core/factory/build/example"
+	"github.com/bsmider/pipes/core/factory/orchestrator"
 	"github.com/google/uuid"
 )
-
-func main() {
-	orch := orchestrator.NewOrchestrator()
-	orch.Spawn({FILE PATH TO GENERATED RPC GO FILE1 AS A STRING}, {FILE PATH TO COMPILED RPC GO BINARY1 AS A STRING}, 1)
-	orch.Spawn({FILE PATH TO GENERATED RPC GO FILE2 AS A STRING}, {FILE PATH TO COMPILED RPC GO BINARY2 AS A STRING}, 1)
-	orch.Spawn({FILE PATH TO GENERATED RPC GO FILE3 AS A STRING}, {FILE PATH TO COMPILED RPC GO BINARY3 AS A STRING}, 1)
-	orch.Spawn({FILE PATH TO GENERATED RPC GO FILE4 AS A STRING}, {FILE PATH TO COMPILED RPC GO BINARY4 AS A STRING}, 1)
-}
 
 func main() {
 	orch := orchestrator.NewOrchestrator()
@@ -54,4 +46,3 @@ func main() {
 		log.Println("Response received but Book is nil")
 	}
 }
-

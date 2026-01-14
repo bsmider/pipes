@@ -337,7 +337,7 @@ const file_core_factory_protos_packet_proto_rawDesc = "" +
 	"PacketType\x12\x1b\n" +
 	"\x17PACKET_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13PACKET_TYPE_REQUEST\x10\x01\x12\x18\n" +
-	"\x14PACKET_TYPE_RESPONSE\x10\x02B.Z,github.com/bsmider/vibe/core/factory;factoryb\x06proto3"
+	"\x14PACKET_TYPE_RESPONSE\x10\x02B/Z-github.com/bsmider/pipes/core/factory;factoryb\x06proto3"
 
 var (
 	file_core_factory_protos_packet_proto_rawDescOnce sync.Once

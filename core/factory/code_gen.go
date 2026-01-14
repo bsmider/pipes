@@ -11,14 +11,15 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/bsmider/vibe/core/factory/utils"
+	"github.com/bsmider/pipes/core/factory/utils"
 )
 
 // CodeGenConfig contains configuration for code generation
 type CodeGenConfig struct {
 	OutputDir         string // Directory where generated files will be written
+	SrcDir            string // Directory containing service files
 	ProcessesImport   string // Import path for the processes package
-	ProtoImportPath   string // Import path for proto messages (e.g., "github.com/bsmider/vibe/core/factory/build/example")
+	ProtoImportPath   string // Import path for proto messages (e.g., "github.com/bsmider/pipes/core/factory/build/example")
 	ProtoPackageAlias string // Package alias for proto imports (e.g., "example")
 }
 
@@ -26,7 +27,8 @@ type CodeGenConfig struct {
 func DefaultCodeGenConfig() CodeGenConfig {
 	return CodeGenConfig{
 		OutputDir:         "./generated",
-		ProcessesImport:   "github.com/bsmider/vibe/core/factory/processes",
+		SrcDir:            "./",
+		ProcessesImport:   "github.com/bsmider/pipes/core/factory/processes",
 		ProtoPackageAlias: "example",
 	}
 }

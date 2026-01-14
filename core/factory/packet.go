@@ -3,7 +3,7 @@ package factory
 import (
 	"fmt"
 
-	"github.com/bsmider/vibe/core/factory/utils"
+	"github.com/bsmider/pipes/core/factory/utils"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"

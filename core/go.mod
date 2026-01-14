@@ -1,4 +1,4 @@
-module github.com/bsmider/vibe/core
+module github.com/bsmider/pipes/core
 
 go 1.24.7
 

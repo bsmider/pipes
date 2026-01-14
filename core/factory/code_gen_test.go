@@ -20,8 +20,8 @@ func TestGenerateFromServiceFile(t *testing.T) {
 
 	config := CodeGenConfig{
 		OutputDir:         tempDir,
-		ProcessesImport:   "github.com/bsmider/vibe/core/factory/processes",
-		ProtoImportPath:   "github.com/bsmider/vibe/core/factory/build/example",
+		ProcessesImport:   "github.com/bsmider/pipes/core/factory/processes",
+		ProtoImportPath:   "github.com/bsmider/pipes/core/factory/build/example",
 		ProtoPackageAlias: "example",
 	}
 
@@ -56,7 +56,7 @@ func TestGenerateFromServiceFile(t *testing.T) {
 	}
 
 	// Verify the unique method ID is included in the processes.Call
-	if !strings.Contains(contentStr, "github.com/bsmider/vibe/core/factory/build/example.BookService.") {
+	if !strings.Contains(contentStr, "github.com/bsmider/pipes/core/factory/build/example.BookService.") {
 		t.Error("Generated file should use full unique method ID in processes.Call")
 	}
 

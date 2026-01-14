@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"sync"
 
-	"github.com/bsmider/vibe/core/factory"
-	"github.com/bsmider/vibe/core/factory/utils"
+	"github.com/bsmider/pipes/core/factory"
+	"github.com/bsmider/pipes/core/factory/utils"
 )
 
 type Worker struct {

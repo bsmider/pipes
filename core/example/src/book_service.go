@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/bsmider/vibe/core/factory/build/example"
+	"github.com/bsmider/pipes/core/example/build/example"
 )
 
 type BookService struct {
@@ -36,6 +36,7 @@ func (s *BookService) GetBook(ctx context.Context, req *example.GetBookRequest) 
 }
 
 func (s *BookService) GetAuthorNameFromBookId(context context.Context, req *example.GetAuthorNameFromBookIdRequest) (*example.GetAuthorNameFromBookIdResponse, error) {
+	log.Printf("GetAuthorNameFromBookId")
 	return &example.GetAuthorNameFromBookIdResponse{
 		AuthorName: "BREVIN SMIDER",
 	}, nil

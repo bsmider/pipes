@@ -17,7 +17,7 @@ func GenerateOrchestrator(methods []MethodInfo, config CodeGenConfig) error {
 
 	// Imports
 	buf.WriteString("import (\n")
-	buf.WriteString("\t\"github.com/bsmider/vibe/core/factory/orchestrator\"\n")
+	buf.WriteString("\t\"github.com/bsmider/pipes/core/factory/orchestrator\"\n")
 	buf.WriteString("\t\"log\"\n")
 	buf.WriteString(")\n\n")
 
