@@ -3,18 +3,17 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
 
-	"github.com/bsmider/vibe/core/factory/build/example"
-	"github.com/bsmider/vibe/core/factory/processes"
+	"log"
+	"github.com/bsmider/pipes/core/example/build/example"
+	"github.com/bsmider/pipes/core/factory/processes"
 )
 
 func GetBook(ctx context.Context, req *example.GetBookRequest) (*example.GetBookResponse, error) {
-
 	authorRequest := &example.GetAuthorNameFromBookIdRequest{
 		BookId: req.BookId,
 	}
-	authorResponse, err := processes.Call[*example.GetAuthorNameFromBookIdRequest, *example.GetAuthorNameFromBookIdResponse]("GetAuthor", ctx, authorRequest)
+	authorResponse, err := processes.Call[*example.GetAuthorNameFromBookIdRequest, *example.GetAuthorNameFromBookIdResponse]("github.com/bsmider/pipes/core/example/build/example.BookService.GetAuthorNameFromBookId", ctx, authorRequest)
 	if err != nil {
 		return nil, err
 	}

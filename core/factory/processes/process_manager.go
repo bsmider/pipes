@@ -12,8 +12,8 @@ import (
 
 	"log"
 
-	"github.com/bsmider/vibe/core/factory"
-	"github.com/bsmider/vibe/core/factory/utils"
+	"github.com/bsmider/pipes/core/factory"
+	"github.com/bsmider/pipes/core/factory/utils"
 	"google.golang.org/protobuf/proto"
 )
 

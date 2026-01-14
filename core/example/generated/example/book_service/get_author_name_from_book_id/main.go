@@ -4,11 +4,13 @@ import (
 	"context"
 	"flag"
 
-	"github.com/bsmider/vibe/core/factory/build/example"
-	"github.com/bsmider/vibe/core/factory/processes"
+	"log"
+	"github.com/bsmider/pipes/core/example/build/example"
+	"github.com/bsmider/pipes/core/factory/processes"
 )
 
 func GetAuthorNameFromBookId(context context.Context, req *example.GetAuthorNameFromBookIdRequest) (*example.GetAuthorNameFromBookIdResponse, error) {
+	log.Printf("GetAuthorNameFromBookId")
 	return &example.GetAuthorNameFromBookIdResponse{
 		AuthorName: "BREVIN SMIDER",
 	}, nil

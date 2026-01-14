@@ -33,13 +33,19 @@ type RPCCall struct {
 	FullCallExpr string // The full call expression text
 }
 
+// ImportInfo represents an imported package
+type ImportInfo struct {
+	Name string // Package alias (or empty if default)
+	Path string // Full import path
+}
+
 // ParsedServiceFile contains all extracted information from a service file
 type ParsedServiceFile struct {
 	PackageName     string
-	Imports         []string
+	Imports         []ImportInfo
 	ServiceName     string
 	Methods         []ServiceMethod
-	ProtoImportPath string // The proto import path (e.g., "github.com/bsmider/vibe/core/factory/build/example")
+	ProtoImportPath string // The proto import path (e.g., "github.com/bsmider/pipes/core/factory/build/example")
 }
 
 // ParseServiceFile parses a Go service file and extracts RPC method information
@@ -53,18 +59,21 @@ func ParseServiceFile(filePath string) (*ParsedServiceFile, error) {
 	result := &ParsedServiceFile{
 		PackageName: file.Name.Name,
 		Methods:     []ServiceMethod{},
-		Imports:     []string{},
+		Imports:     []ImportInfo{},
 	}
 
 	// Extract imports
 	for _, imp := range file.Imports {
 		importPath := strings.Trim(imp.Path.Value, `"`)
-		result.Imports = append(result.Imports, importPath)
-
-		// Detect proto import path (heuristic: contains "build" or ends with proto package name)
-		if strings.Contains(importPath, "/build/") {
-			result.ProtoImportPath = importPath
+		name := ""
+		if imp.Name != nil {
+			name = imp.Name.Name
 		}
+
+		result.Imports = append(result.Imports, ImportInfo{
+			Name: name,
+			Path: importPath,
+		})
 	}
 
 	// Find all method declarations with receivers
@@ -125,7 +134,56 @@ func ParseServiceFile(filePath string) (*ParsedServiceFile, error) {
 		return true
 	})
 
+	// Resolve ProtoImportPath by inspecting the Request Type of the first available method
+	// We assume all methods in the service use types from the same proto package.
+	for _, method := range result.Methods {
+		if method.ReqType == "" {
+			continue
+		}
+
+		// Request type is typically like "*example.GetBookRequest"
+		// We want to extract "example"
+		parts := strings.Split(strings.TrimPrefix(method.ReqType, "*"), ".")
+		if len(parts) < 2 {
+			continue
+		}
+
+		pkgAlias := parts[0]
+
+		// Look up the import path for this alias
+		for _, imp := range result.Imports {
+			// Check explicit alias
+			if imp.Name == pkgAlias {
+				result.ProtoImportPath = imp.Path
+				break
+			}
+
+			// Check default package name (last part of path)
+			if imp.Name == "" {
+				pathParts := strings.Split(imp.Path, "/")
+				if len(pathParts) > 0 && pathParts[len(pathParts)-1] == pkgAlias {
+					result.ProtoImportPath = imp.Path
+					break
+				}
+			}
+		}
+
+		if result.ProtoImportPath != "" {
+			break
+		}
+	}
+
 	return result, nil
+}
+
+// GetMethodByName finds a ServiceMethod by name from a list
+func GetMethodByName(methods []ServiceMethod, name string) *ServiceMethod {
+	for _, m := range methods {
+		if m.Name == name {
+			return &m
+		}
+	}
+	return nil
 }
 
 // extractTypeName extracts the type name from an expression, handling pointers
@@ -227,14 +285,4 @@ func FindRPCCalls(filePath string, method ServiceMethod, serviceMethodNames []st
 	})
 
 	return calls, nil
-}
-
-// GetMethodByName finds a ServiceMethod by name from a list
-func GetMethodByName(methods []ServiceMethod, name string) *ServiceMethod {
-	for _, m := range methods {
-		if m.Name == name {
-			return &m
-		}
-	}
-	return nil
 }

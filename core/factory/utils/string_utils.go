@@ -40,7 +40,7 @@ func ExtractMethodName(call string) (string, bool) {
 // service name, and method name. This ensures uniqueness even when different services have
 // methods with the same name (e.g., A.GetBook vs B.GetBook).
 // Format: "{proto_package_path}.{service_name}.{method_name}"
-// Example: "github.com/bsmider/vibe/core/factory/build/example.BookService.GetBook"
+// Example: "github.com/bsmider/pipes/core/factory/build/example.BookService.GetBook"
 func GenerateMethodID(protoImportPath, serviceName, methodName string) string {
 	return protoImportPath + "." + serviceName + "." + methodName
 }

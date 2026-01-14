@@ -5,9 +5,9 @@ plugins:
     opt:
       # This strips the repo prefix so Buf creates folders 
       # starting from your actual project root.
-      - module=github.com/bsmider/vibe 
+      - module=github.com/bsmider/pipes 
 
   - remote: buf.build/grpc/go
     out: .
     opt:
-      - module=github.com/bsmider/vibe
+      - module=github.com/bsmider/pipes

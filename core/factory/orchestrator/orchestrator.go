@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bsmider/vibe/core/factory"
+	"github.com/bsmider/pipes/core/factory"
 	"github.com/google/uuid"
 	"golang.org/x/sys/unix"
 )

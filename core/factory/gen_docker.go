@@ -11,27 +11,35 @@ import (
 func GenerateDockerfile(methods []MethodInfo, config CodeGenConfig) error {
 	var buf bytes.Buffer
 
+	// Get relative path to output directory for build context references
+	cwd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("failed to get cwd: %w", err)
+	}
+	relOutputDir, err := filepath.Rel(cwd, config.OutputDir)
+	if err != nil {
+		return fmt.Errorf("failed to get relative output dir: %w", err)
+	}
+
 	buf.WriteString("FROM golang:1.24-alpine AS builder\n\n")
 	buf.WriteString("WORKDIR /app\n\n")
 
 	// Copy go.mod and go.sum first for caching
-	buf.WriteString("# Copy the entire core module to resolve dependencies\n")
-	buf.WriteString("COPY core/go.mod core/go.sum ./core/\n")
-	buf.WriteString("RUN cd core && go mod download\n\n")
+	buf.WriteString("# Copy metadata to resolve dependencies\n")
+	buf.WriteString("COPY go.mod go.sum ./\n")
+	buf.WriteString("RUN go mod download\n\n")
 
 	// Copy the source code
-	buf.WriteString("COPY core/ ./core/\n\n")
+	buf.WriteString("COPY . ./\n\n")
 
 	// Build each RPC method
 	for _, method := range methods {
 		// Calculate the directory to build in
-		// Assumes the generated files are in core/generated/, so inside the container
-		// they are at /app/core/generated/
 		// method.RelativePath is like "example/book_service/get_book/main.go"
 
 		// valid relative path for `cd`
 		dirPath := filepath.Dir(method.RelativePath)
-		buildDir := filepath.Join("core/generated", dirPath)
+		buildDir := filepath.Join(relOutputDir, dirPath)
 
 		buf.WriteString(fmt.Sprintf("# Build %s\n", method.MethodName))
 		// We use the ShortID for the binary identification
@@ -40,7 +48,8 @@ func GenerateDockerfile(methods []MethodInfo, config CodeGenConfig) error {
 
 	// Build Orchestrator
 	buf.WriteString("# Build orchestrator\n")
-	buf.WriteString("RUN cd core/generated/orchestrator && go build -o /orchestrator main.go\n\n")
+	orchestratorDir := filepath.Join(relOutputDir, "orchestrator")
+	buf.WriteString(fmt.Sprintf("RUN cd %s && go build -o /orchestrator main.go\n\n", orchestratorDir))
 
 	// Final Stage
 	buf.WriteString("FROM alpine:latest\n\n")

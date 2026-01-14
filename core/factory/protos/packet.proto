@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package factory;
 
-option go_package = "github.com/bsmider/vibe/core/factory;factory";
+option go_package = "github.com/bsmider/pipes/core/factory;factory";
 
 import "google/protobuf/timestamp.proto";
 import "google/rpc/status.proto";

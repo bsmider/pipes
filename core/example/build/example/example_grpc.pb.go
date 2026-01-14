@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.0
 // - protoc             (unknown)
-// source: core/factory/protos/example/example.proto
+// source: core/example/protos/example.proto
 
 package example
 
@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	BookService_GetBook_FullMethodName                 = "/example.BookService/GetBook"
 	BookService_GetAuthorNameFromBookId_FullMethodName = "/example.BookService/GetAuthorNameFromBookId"
+	BookService_GetAuthor_FullMethodName               = "/example.BookService/GetAuthor"
 )
 
 // BookServiceClient is the client API for BookService service.
@@ -29,6 +30,7 @@ const (
 type BookServiceClient interface {
 	GetBook(ctx context.Context, in *GetBookRequest, opts ...grpc.CallOption) (*GetBookResponse, error)
 	GetAuthorNameFromBookId(ctx context.Context, in *GetAuthorNameFromBookIdRequest, opts ...grpc.CallOption) (*GetAuthorNameFromBookIdResponse, error)
+	GetAuthor(ctx context.Context, in *GetAuthorRequest, opts ...grpc.CallOption) (*GetAuthorResponse, error)
 }
 
 type bookServiceClient struct {
@@ -59,12 +61,23 @@ func (c *bookServiceClient) GetAuthorNameFromBookId(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *bookServiceClient) GetAuthor(ctx context.Context, in *GetAuthorRequest, opts ...grpc.CallOption) (*GetAuthorResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAuthorResponse)
+	err := c.cc.Invoke(ctx, BookService_GetAuthor_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BookServiceServer is the server API for BookService service.
 // All implementations must embed UnimplementedBookServiceServer
 // for forward compatibility.
 type BookServiceServer interface {
 	GetBook(context.Context, *GetBookRequest) (*GetBookResponse, error)
 	GetAuthorNameFromBookId(context.Context, *GetAuthorNameFromBookIdRequest) (*GetAuthorNameFromBookIdResponse, error)
+	GetAuthor(context.Context, *GetAuthorRequest) (*GetAuthorResponse, error)
 	mustEmbedUnimplementedBookServiceServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedBookServiceServer) GetBook(context.Context, *GetBookRequest) 
 }
 func (UnimplementedBookServiceServer) GetAuthorNameFromBookId(context.Context, *GetAuthorNameFromBookIdRequest) (*GetAuthorNameFromBookIdResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAuthorNameFromBookId not implemented")
+}
+func (UnimplementedBookServiceServer) GetAuthor(context.Context, *GetAuthorRequest) (*GetAuthorResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAuthor not implemented")
 }
 func (UnimplementedBookServiceServer) mustEmbedUnimplementedBookServiceServer() {}
 func (UnimplementedBookServiceServer) testEmbeddedByValue()                     {}
@@ -138,6 +154,24 @@ func _BookService_GetAuthorNameFromBookId_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookService_GetAuthor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAuthorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookServiceServer).GetAuthor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookService_GetAuthor_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookServiceServer).GetAuthor(ctx, req.(*GetAuthorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BookService_ServiceDesc is the grpc.ServiceDesc for BookService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -153,7 +187,11 @@ var BookService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetAuthorNameFromBookId",
 			Handler:    _BookService_GetAuthorNameFromBookId_Handler,
 		},
+		{
+			MethodName: "GetAuthor",
+			Handler:    _BookService_GetAuthor_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "core/factory/protos/example/example.proto",
+	Metadata: "core/example/protos/example.proto",
 }

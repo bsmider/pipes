@@ -2,11 +2,12 @@ syntax = "proto3";
 
 package example;
 
-option go_package = "github.com/bsmider/vibe/core/factory/build/example;example";
+option go_package = "github.com/bsmider/pipes/core/example/build/example;example";
 
 service BookService {
     rpc GetBook(GetBookRequest) returns (GetBookResponse);
     rpc GetAuthorNameFromBookId(GetAuthorNameFromBookIdRequest) returns (GetAuthorNameFromBookIdResponse);
+    rpc GetAuthor(GetAuthorRequest) returns (GetAuthorResponse);
 }
 
 message GetAuthorNameFromBookIdRequest {

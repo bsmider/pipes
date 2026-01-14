@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        (unknown)
-// source: core/factory/protos/example/example.proto
+// source: core/example/protos/example.proto
 
 package example
 
@@ -30,7 +30,7 @@ type GetAuthorNameFromBookIdRequest struct {
 
 func (x *GetAuthorNameFromBookIdRequest) Reset() {
 	*x = GetAuthorNameFromBookIdRequest{}
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[0]
+	mi := &file_core_example_protos_example_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +42,7 @@ func (x *GetAuthorNameFromBookIdRequest) String() string {
 func (*GetAuthorNameFromBookIdRequest) ProtoMessage() {}
 
 func (x *GetAuthorNameFromBookIdRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[0]
+	mi := &file_core_example_protos_example_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,7 +55,7 @@ func (x *GetAuthorNameFromBookIdRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAuthorNameFromBookIdRequest.ProtoReflect.Descriptor instead.
 func (*GetAuthorNameFromBookIdRequest) Descriptor() ([]byte, []int) {
-	return file_core_factory_protos_example_example_proto_rawDescGZIP(), []int{0}
+	return file_core_example_protos_example_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *GetAuthorNameFromBookIdRequest) GetBookId() string {
@@ -74,7 +74,7 @@ type GetAuthorNameFromBookIdResponse struct {
 
 func (x *GetAuthorNameFromBookIdResponse) Reset() {
 	*x = GetAuthorNameFromBookIdResponse{}
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[1]
+	mi := &file_core_example_protos_example_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -86,7 +86,7 @@ func (x *GetAuthorNameFromBookIdResponse) String() string {
 func (*GetAuthorNameFromBookIdResponse) ProtoMessage() {}
 
 func (x *GetAuthorNameFromBookIdResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[1]
+	mi := &file_core_example_protos_example_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -99,7 +99,7 @@ func (x *GetAuthorNameFromBookIdResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAuthorNameFromBookIdResponse.ProtoReflect.Descriptor instead.
 func (*GetAuthorNameFromBookIdResponse) Descriptor() ([]byte, []int) {
-	return file_core_factory_protos_example_example_proto_rawDescGZIP(), []int{1}
+	return file_core_example_protos_example_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetAuthorNameFromBookIdResponse) GetAuthorName() string {
@@ -119,7 +119,7 @@ type Author struct {
 
 func (x *Author) Reset() {
 	*x = Author{}
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[2]
+	mi := &file_core_example_protos_example_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -131,7 +131,7 @@ func (x *Author) String() string {
 func (*Author) ProtoMessage() {}
 
 func (x *Author) ProtoReflect() protoreflect.Message {
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[2]
+	mi := &file_core_example_protos_example_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -144,7 +144,7 @@ func (x *Author) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Author.ProtoReflect.Descriptor instead.
 func (*Author) Descriptor() ([]byte, []int) {
-	return file_core_factory_protos_example_example_proto_rawDescGZIP(), []int{2}
+	return file_core_example_protos_example_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Author) GetAuthorId() string {
@@ -172,7 +172,7 @@ type Book struct {
 
 func (x *Book) Reset() {
 	*x = Book{}
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[3]
+	mi := &file_core_example_protos_example_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -184,7 +184,7 @@ func (x *Book) String() string {
 func (*Book) ProtoMessage() {}
 
 func (x *Book) ProtoReflect() protoreflect.Message {
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[3]
+	mi := &file_core_example_protos_example_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -197,7 +197,7 @@ func (x *Book) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Book.ProtoReflect.Descriptor instead.
 func (*Book) Descriptor() ([]byte, []int) {
-	return file_core_factory_protos_example_example_proto_rawDescGZIP(), []int{3}
+	return file_core_example_protos_example_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Book) GetBookId() string {
@@ -230,7 +230,7 @@ type GetBookRequest struct {
 
 func (x *GetBookRequest) Reset() {
 	*x = GetBookRequest{}
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[4]
+	mi := &file_core_example_protos_example_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -242,7 +242,7 @@ func (x *GetBookRequest) String() string {
 func (*GetBookRequest) ProtoMessage() {}
 
 func (x *GetBookRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[4]
+	mi := &file_core_example_protos_example_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -255,7 +255,7 @@ func (x *GetBookRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBookRequest.ProtoReflect.Descriptor instead.
 func (*GetBookRequest) Descriptor() ([]byte, []int) {
-	return file_core_factory_protos_example_example_proto_rawDescGZIP(), []int{4}
+	return file_core_example_protos_example_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetBookRequest) GetBookId() string {
@@ -274,7 +274,7 @@ type GetBookResponse struct {
 
 func (x *GetBookResponse) Reset() {
 	*x = GetBookResponse{}
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[5]
+	mi := &file_core_example_protos_example_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -286,7 +286,7 @@ func (x *GetBookResponse) String() string {
 func (*GetBookResponse) ProtoMessage() {}
 
 func (x *GetBookResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[5]
+	mi := &file_core_example_protos_example_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -299,7 +299,7 @@ func (x *GetBookResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBookResponse.ProtoReflect.Descriptor instead.
 func (*GetBookResponse) Descriptor() ([]byte, []int) {
-	return file_core_factory_protos_example_example_proto_rawDescGZIP(), []int{5}
+	return file_core_example_protos_example_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetBookResponse) GetBook() *Book {
@@ -318,7 +318,7 @@ type GetAuthorRequest struct {
 
 func (x *GetAuthorRequest) Reset() {
 	*x = GetAuthorRequest{}
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[6]
+	mi := &file_core_example_protos_example_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -330,7 +330,7 @@ func (x *GetAuthorRequest) String() string {
 func (*GetAuthorRequest) ProtoMessage() {}
 
 func (x *GetAuthorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[6]
+	mi := &file_core_example_protos_example_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -343,7 +343,7 @@ func (x *GetAuthorRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAuthorRequest.ProtoReflect.Descriptor instead.
 func (*GetAuthorRequest) Descriptor() ([]byte, []int) {
-	return file_core_factory_protos_example_example_proto_rawDescGZIP(), []int{6}
+	return file_core_example_protos_example_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetAuthorRequest) GetAuthorId() string {
@@ -362,7 +362,7 @@ type GetAuthorResponse struct {
 
 func (x *GetAuthorResponse) Reset() {
 	*x = GetAuthorResponse{}
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[7]
+	mi := &file_core_example_protos_example_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -374,7 +374,7 @@ func (x *GetAuthorResponse) String() string {
 func (*GetAuthorResponse) ProtoMessage() {}
 
 func (x *GetAuthorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_core_factory_protos_example_example_proto_msgTypes[7]
+	mi := &file_core_example_protos_example_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -387,7 +387,7 @@ func (x *GetAuthorResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAuthorResponse.ProtoReflect.Descriptor instead.
 func (*GetAuthorResponse) Descriptor() ([]byte, []int) {
-	return file_core_factory_protos_example_example_proto_rawDescGZIP(), []int{7}
+	return file_core_example_protos_example_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetAuthorResponse) GetAuthor() *Author {
@@ -397,11 +397,11 @@ func (x *GetAuthorResponse) GetAuthor() *Author {
 	return nil
 }
 
-var File_core_factory_protos_example_example_proto protoreflect.FileDescriptor
+var File_core_example_protos_example_proto protoreflect.FileDescriptor
 
-const file_core_factory_protos_example_example_proto_rawDesc = "" +
+const file_core_example_protos_example_proto_rawDesc = "" +
 	"\n" +
-	")core/factory/protos/example/example.proto\x12\aexample\"8\n" +
+	"!core/example/protos/example.proto\x12\aexample\"8\n" +
 	"\x1eGetAuthorNameFromBookIdRequest\x12\x16\n" +
 	"\x06bookId\x18\x01 \x01(\tR\x06bookId\"A\n" +
 	"\x1fGetAuthorNameFromBookIdResponse\x12\x1e\n" +
@@ -422,25 +422,26 @@ const file_core_factory_protos_example_example_proto_rawDesc = "" +
 	"\x10GetAuthorRequest\x12\x1a\n" +
 	"\bauthorId\x18\x01 \x01(\tR\bauthorId\"<\n" +
 	"\x11GetAuthorResponse\x12'\n" +
-	"\x06author\x18\x01 \x01(\v2\x0f.example.AuthorR\x06author2\xb9\x01\n" +
+	"\x06author\x18\x01 \x01(\v2\x0f.example.AuthorR\x06author2\xfd\x01\n" +
 	"\vBookService\x12<\n" +
 	"\aGetBook\x12\x17.example.GetBookRequest\x1a\x18.example.GetBookResponse\x12l\n" +
-	"\x17GetAuthorNameFromBookId\x12'.example.GetAuthorNameFromBookIdRequest\x1a(.example.GetAuthorNameFromBookIdResponseB<Z:github.com/bsmider/vibe/core/factory/build/example;exampleb\x06proto3"
+	"\x17GetAuthorNameFromBookId\x12'.example.GetAuthorNameFromBookIdRequest\x1a(.example.GetAuthorNameFromBookIdResponse\x12B\n" +
+	"\tGetAuthor\x12\x19.example.GetAuthorRequest\x1a\x1a.example.GetAuthorResponseB=Z;github.com/bsmider/pipes/core/example/build/example;exampleb\x06proto3"
 
 var (
-	file_core_factory_protos_example_example_proto_rawDescOnce sync.Once
-	file_core_factory_protos_example_example_proto_rawDescData []byte
+	file_core_example_protos_example_proto_rawDescOnce sync.Once
+	file_core_example_protos_example_proto_rawDescData []byte
 )
 
-func file_core_factory_protos_example_example_proto_rawDescGZIP() []byte {
-	file_core_factory_protos_example_example_proto_rawDescOnce.Do(func() {
-		file_core_factory_protos_example_example_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_core_factory_protos_example_example_proto_rawDesc), len(file_core_factory_protos_example_example_proto_rawDesc)))
+func file_core_example_protos_example_proto_rawDescGZIP() []byte {
+	file_core_example_protos_example_proto_rawDescOnce.Do(func() {
+		file_core_example_protos_example_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_core_example_protos_example_proto_rawDesc), len(file_core_example_protos_example_proto_rawDesc)))
 	})
-	return file_core_factory_protos_example_example_proto_rawDescData
+	return file_core_example_protos_example_proto_rawDescData
 }
 
-var file_core_factory_protos_example_example_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
-var file_core_factory_protos_example_example_proto_goTypes = []any{
+var file_core_example_protos_example_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_core_example_protos_example_proto_goTypes = []any{
 	(*GetAuthorNameFromBookIdRequest)(nil),  // 0: example.GetAuthorNameFromBookIdRequest
 	(*GetAuthorNameFromBookIdResponse)(nil), // 1: example.GetAuthorNameFromBookIdResponse
 	(*Author)(nil),                          // 2: example.Author
@@ -450,40 +451,42 @@ var file_core_factory_protos_example_example_proto_goTypes = []any{
 	(*GetAuthorRequest)(nil),                // 6: example.GetAuthorRequest
 	(*GetAuthorResponse)(nil),               // 7: example.GetAuthorResponse
 }
-var file_core_factory_protos_example_example_proto_depIdxs = []int32{
+var file_core_example_protos_example_proto_depIdxs = []int32{
 	3, // 0: example.GetBookResponse.book:type_name -> example.Book
 	2, // 1: example.GetAuthorResponse.author:type_name -> example.Author
 	4, // 2: example.BookService.GetBook:input_type -> example.GetBookRequest
 	0, // 3: example.BookService.GetAuthorNameFromBookId:input_type -> example.GetAuthorNameFromBookIdRequest
-	5, // 4: example.BookService.GetBook:output_type -> example.GetBookResponse
-	1, // 5: example.BookService.GetAuthorNameFromBookId:output_type -> example.GetAuthorNameFromBookIdResponse
-	4, // [4:6] is the sub-list for method output_type
-	2, // [2:4] is the sub-list for method input_type
+	6, // 4: example.BookService.GetAuthor:input_type -> example.GetAuthorRequest
+	5, // 5: example.BookService.GetBook:output_type -> example.GetBookResponse
+	1, // 6: example.BookService.GetAuthorNameFromBookId:output_type -> example.GetAuthorNameFromBookIdResponse
+	7, // 7: example.BookService.GetAuthor:output_type -> example.GetAuthorResponse
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
 	2, // [2:2] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_core_factory_protos_example_example_proto_init() }
-func file_core_factory_protos_example_example_proto_init() {
-	if File_core_factory_protos_example_example_proto != nil {
+func init() { file_core_example_protos_example_proto_init() }
+func file_core_example_protos_example_proto_init() {
+	if File_core_example_protos_example_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_factory_protos_example_example_proto_rawDesc), len(file_core_factory_protos_example_example_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_example_protos_example_proto_rawDesc), len(file_core_example_protos_example_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_core_factory_protos_example_example_proto_goTypes,
-		DependencyIndexes: file_core_factory_protos_example_example_proto_depIdxs,
-		MessageInfos:      file_core_factory_protos_example_example_proto_msgTypes,
+		GoTypes:           file_core_example_protos_example_proto_goTypes,
+		DependencyIndexes: file_core_example_protos_example_proto_depIdxs,
+		MessageInfos:      file_core_example_protos_example_proto_msgTypes,
 	}.Build()
-	File_core_factory_protos_example_example_proto = out.File
-	file_core_factory_protos_example_example_proto_goTypes = nil
-	file_core_factory_protos_example_example_proto_depIdxs = nil
+	File_core_example_protos_example_proto = out.File
+	file_core_example_protos_example_proto_goTypes = nil
+	file_core_example_protos_example_proto_depIdxs = nil
 }
